@@ -399,9 +399,6 @@ public class CommandsHandler implements CommandExecutor {
     }
 
     private boolean checkRestrictions(CommandSender sender, QueryParams params) {
-        if (sender.isOp() || logblock.hasPermission(sender, "logblock.ignoreRestrictions")) {
-            return true;
-        }
         if (rollbackMaxTime > 0 && (params.since <= 0 || params.since > rollbackMaxTime)) {
             sender.sendMessage(ChatColor.RED + "You are not allowed to rollback more than " + rollbackMaxTime + " minutes");
             return false;
