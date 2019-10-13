@@ -141,10 +141,14 @@ public class BukkitUtils {
         singleBlockPlants.add(Material.WHITE_TULIP);
         singleBlockPlants.add(Material.PINK_TULIP);
         singleBlockPlants.add(Material.RED_TULIP);
-        singleBlockPlants.add(Material.OXEYE_DAISY);        
+        singleBlockPlants.add(Material.OXEYE_DAISY);
         singleBlockPlants.add(Material.BROWN_MUSHROOM);
         singleBlockPlants.add(Material.RED_MUSHROOM);
-        
+        singleBlockPlants.add(Material.SWEET_BERRY_BUSH);
+        singleBlockPlants.add(Material.LILY_OF_THE_VALLEY);
+        singleBlockPlants.add(Material.CORNFLOWER);
+        singleBlockPlants.add(Material.WITHER_ROSE);
+
         doublePlants = EnumSet.noneOf(Material.class);
         doublePlants.add(Material.TALL_GRASS);
         doublePlants.add(Material.LARGE_FERN);
@@ -153,15 +157,15 @@ public class BukkitUtils {
         doublePlants.add(Material.LILAC);
         doublePlants.add(Material.SUNFLOWER);
         doublePlants.add(Material.PEONY);
-        
-        blockEquivalents = new HashSet<Set<Integer>>(7);
-        blockEquivalents.add(new HashSet<Integer>(Arrays.asList(2, 3, 60)));
-        blockEquivalents.add(new HashSet<Integer>(Arrays.asList(8, 9, 79)));
-        blockEquivalents.add(new HashSet<Integer>(Arrays.asList(10, 11)));
-        blockEquivalents.add(new HashSet<Integer>(Arrays.asList(61, 62)));
-        blockEquivalents.add(new HashSet<Integer>(Arrays.asList(73, 74)));
-        blockEquivalents.add(new HashSet<Integer>(Arrays.asList(75, 76)));
-        blockEquivalents.add(new HashSet<Integer>(Arrays.asList(93, 94)));
+
+        blockEquivalents = new HashSet<>(7);
+        blockEquivalents.add(new HashSet<>(Arrays.asList(2, 3, 60)));
+        blockEquivalents.add(new HashSet<>(Arrays.asList(8, 9, 79)));
+        blockEquivalents.add(new HashSet<>(Arrays.asList(10, 11)));
+        blockEquivalents.add(new HashSet<>(Arrays.asList(61, 62)));
+        blockEquivalents.add(new HashSet<>(Arrays.asList(73, 74)));
+        blockEquivalents.add(new HashSet<>(Arrays.asList(75, 76)));
+        blockEquivalents.add(new HashSet<>(Arrays.asList(93, 94)));
 
         // Blocks that break when they are attached to a block
         relativeBreakable = EnumSet.noneOf(Material.class);
@@ -178,6 +182,7 @@ public class BukkitUtils {
         relativeBreakable.add(Material.WALL_TORCH);
         relativeBreakable.add(Material.TRIPWIRE_HOOK);
         relativeBreakable.add(Material.COCOA);
+        relativeBreakable.add(Material.BELL);
 
         // Blocks that break when they are on top of a block
         relativeTopBreakable = EnumSet.noneOf(Material.class);
@@ -206,13 +211,18 @@ public class BukkitUtils {
         relativeTopBreakable.add(Material.REPEATER);
         relativeTopBreakable.add(Material.COMPARATOR);
         relativeTopBreakable.add(Material.TORCH);
-        relativeTopBreakable.add(Material.WALL_TORCH);
         relativeTopBreakable.add(Material.REDSTONE_TORCH);
-        relativeTopBreakable.add(Material.REDSTONE_WALL_TORCH);
         relativeTopBreakable.addAll(woodenDoors);
         relativeTopBreakable.add(Material.IRON_DOOR);
         relativeTopBreakable.addAll(carpets);
         relativeTopBreakable.addAll(doublePlants);
+        relativeTopBreakable.add(Material.BAMBOO);
+        relativeTopBreakable.add(Material.BAMBOO_SAPLING);
+        for (Material m : Material.values()) {
+            if (m.name().startsWith("POTTED_")) {
+                relativeTopBreakable.add(m);
+            }
+        }
 
         // Blocks that break falling entities
         fallingEntityKillers = EnumSet.noneOf(Material.class);
@@ -239,7 +249,7 @@ public class BukkitUtils {
         fallingEntityKillers.add(Material.WHITE_TULIP);
         fallingEntityKillers.add(Material.PINK_TULIP);
         fallingEntityKillers.add(Material.RED_TULIP);
-        fallingEntityKillers.add(Material.OXEYE_DAISY);        
+        fallingEntityKillers.add(Material.OXEYE_DAISY);
         fallingEntityKillers.add(Material.BROWN_MUSHROOM);
         fallingEntityKillers.add(Material.RED_MUSHROOM);
         fallingEntityKillers.addAll(doublePlants);
@@ -296,7 +306,6 @@ public class BukkitUtils {
         containerBlocks.add(Material.HOPPER);
         containerBlocks.add(Material.BREWING_STAND);
         containerBlocks.add(Material.FURNACE);
-        containerBlocks.add(Material.BEACON);
         containerBlocks.add(Material.SHULKER_BOX);
         containerBlocks.add(Material.BLACK_SHULKER_BOX);
         containerBlocks.add(Material.BLUE_SHULKER_BOX);
@@ -314,21 +323,25 @@ public class BukkitUtils {
         containerBlocks.add(Material.RED_SHULKER_BOX);
         containerBlocks.add(Material.WHITE_SHULKER_BOX);
         containerBlocks.add(Material.YELLOW_SHULKER_BOX);
+        containerBlocks.add(Material.BARREL);
+        containerBlocks.add(Material.BLAST_FURNACE);
+        containerBlocks.add(Material.SMOKER);
         // Doesn't actually have a block inventory
         // containerBlocks.add(Material.ENDER_CHEST);
 
         // It doesn't seem like you could injure people with some of these, but they exist, so....
-        projectileItems = new EnumMap<EntityType, Material>(EntityType.class);
+        projectileItems = new EnumMap<>(EntityType.class);
         projectileItems.put(EntityType.ARROW, Material.ARROW);
         projectileItems.put(EntityType.EGG, Material.EGG);
         projectileItems.put(EntityType.ENDER_PEARL, Material.ENDER_PEARL);
-        projectileItems.put(EntityType.SMALL_FIREBALL, Material.FIRE_CHARGE);    // Fire charge
-        projectileItems.put(EntityType.FIREBALL, Material.FIRE_CHARGE);        // Fire charge
+        projectileItems.put(EntityType.SMALL_FIREBALL, Material.FIRE_CHARGE); // Fire charge
+        projectileItems.put(EntityType.FIREBALL, Material.FIRE_CHARGE); // Fire charge
         projectileItems.put(EntityType.FISHING_HOOK, Material.FISHING_ROD);
         projectileItems.put(EntityType.SNOWBALL, Material.SNOWBALL);
         projectileItems.put(EntityType.SPLASH_POTION, Material.SPLASH_POTION);
         projectileItems.put(EntityType.THROWN_EXP_BOTTLE, Material.EXPERIENCE_BOTTLE);
         projectileItems.put(EntityType.WITHER_SKULL, Material.WITHER_SKELETON_SKULL);
+        projectileItems.put(EntityType.FIREWORK, Material.FIREWORK_ROCKET);
 
         nonFluidProofBlocks = EnumSet.noneOf(Material.class);
         nonFluidProofBlocks.addAll(singleBlockPlants);
@@ -414,7 +427,7 @@ public class BukkitUtils {
         dyes.put(Material.YELLOW_DYE, DyeColor.YELLOW);
     }
 
-    private static final BlockFace[] relativeBlockFaces = new BlockFace[]{
+    private static final BlockFace[] relativeBlockFaces = new BlockFace[] {
             BlockFace.EAST, BlockFace.WEST, BlockFace.NORTH, BlockFace.SOUTH, BlockFace.UP, BlockFace.DOWN
     };
 
@@ -426,7 +439,7 @@ public class BukkitUtils {
      * @return List of block locations around the block that are of the type specified by the integer list parameter
      */
     public static List<Location> getBlocksNearby(org.bukkit.block.Block block, Set<Material> type) {
-        ArrayList<Location> blocks = new ArrayList<Location>();
+        ArrayList<Location> blocks = new ArrayList<>();
         for (BlockFace blockFace : relativeBlockFaces) {
             if (type.contains(block.getRelative(blockFace).getType())) {
                 blocks.add(block.getRelative(blockFace).getLocation());
@@ -463,7 +476,7 @@ public class BukkitUtils {
     }
 
     public static ItemStack[] compareInventories(ItemStack[] items1, ItemStack[] items2) {
-        final ArrayList<ItemStack> diff = new ArrayList<ItemStack>();
+        final ArrayList<ItemStack> diff = new ArrayList<>();
         for (ItemStack current : items2) {
             diff.add(new ItemStack(current));
         }
@@ -491,7 +504,7 @@ public class BukkitUtils {
     }
 
     public static ItemStack[] compressInventory(ItemStack[] items) {
-        final ArrayList<ItemStack> compressed = new ArrayList<ItemStack>();
+        final ArrayList<ItemStack> compressed = new ArrayList<>();
         for (final ItemStack item : items) {
             if (item != null) {
                 boolean found = false;
@@ -541,7 +554,7 @@ public class BukkitUtils {
     public static Set<Material> getFallingEntityKillers() {
         return fallingEntityKillers;
     }
-    
+
     public static Set<Material> getNonFluidProofBlocks() {
         return nonFluidProofBlocks;
     }
@@ -588,10 +601,7 @@ public class BukkitUtils {
 
     public static int saveSpawnHeight(Location loc) {
         final World world = loc.getWorld();
-        final Chunk chunk = world.getChunkAt(loc);
-        if (!world.isChunkLoaded(chunk)) {
-            world.loadChunk(chunk);
-        }
+        world.getChunkAt(loc);
         final int x = loc.getBlockX(), z = loc.getBlockZ();
         int y = loc.getBlockY();
         boolean lower = world.getBlockAt(x, y, z).isEmpty(), upper = world.getBlockAt(x, y + 1, z).isEmpty();
@@ -642,7 +652,7 @@ public class BukkitUtils {
     public static Material itemIDfromProjectileEntity(Entity e) {
         return projectileItems.get(e.getType());
     }
-    
+
     public static boolean isDoublePlant(Material m) {
         return doublePlants.contains(m);
     }
@@ -787,7 +797,7 @@ public class BukkitUtils {
             if (face.getType() == chestBlock.getType()) {
                 // check is the neighbour connects to this chest
                 org.bukkit.block.data.type.Chest otherChestData = (org.bukkit.block.data.type.Chest) face.getBlockData();
-                if(otherChestData.getType() != wantedChestType || otherChestData.getFacing() != chestFace) {
+                if (otherChestData.getType() != wantedChestType || otherChestData.getFacing() != chestFace) {
                     return null;
                 }
                 return face;
@@ -802,7 +812,7 @@ public class BukkitUtils {
             return e;
         }
         if (!chunk.isLoaded()) {
-            chunk.load();
+            chunk.getWorld().getChunkAt(chunk.getX(), chunk.getZ());
             e = Bukkit.getEntity(uuid);
             if (e != null) {
                 return e;
@@ -814,7 +824,7 @@ public class BukkitUtils {
             int x = i < 3 ? chunkx - 1 : (i < 5 ? chunkx : chunkx + 1);
             int z = i == 0 || i == 3 || i == 5 ? chunkz - 1 : (i == 1 || i == 6 ? chunkz : chunkz + 1);
             if (!chunk.getWorld().isChunkLoaded(x, z)) {
-                chunk.getWorld().loadChunk(x, z);
+                chunk.getWorld().getChunkAt(x, z);
                 e = Bukkit.getEntity(uuid);
                 if (e != null) {
                     return e;

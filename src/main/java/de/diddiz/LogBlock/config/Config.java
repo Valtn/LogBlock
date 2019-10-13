@@ -25,6 +25,7 @@ public class Config {
     private static LoggingEnabledMapping superWorldConfig;
     private static Map<String, WorldConfig> worldConfigs;
     public static String url, user, password;
+    public static boolean mysqlUseSSL;
     public static boolean mysqlRequireSSL;
     public static int delayBetweenRuns, forceToProcessAtLeast, timePerRun;
     public static boolean fireCustomEvents;
@@ -58,14 +59,16 @@ public class Config {
     public static boolean mb4 = false;
 
     public static enum LogKillsLevel {
-        PLAYERS, MONSTERS, ANIMALS;
+        PLAYERS,
+        MONSTERS,
+        ANIMALS;
     }
 
     public static void load(LogBlock logblock) throws DataFormatException, IOException {
         final ConfigurationSection config = logblock.getConfig();
-        final Map<String, Object> def = new HashMap<String, Object>();
+        final Map<String, Object> def = new HashMap<>();
         def.put("version", logblock.getDescription().getVersion());
-        final List<String> worldNames = new ArrayList<String>();
+        final List<String> worldNames = new ArrayList<>();
         for (final World world : getWorlds()) {
             worldNames.add(world.getName());
         }
@@ -80,6 +83,7 @@ public class Config {
         def.put("mysql.database", "minecraft");
         def.put("mysql.user", "username");
         def.put("mysql.password", "pass");
+        def.put("mysql.useSSL", true);
         def.put("mysql.requireSSL", false);
         def.put("consumer.delayBetweenRuns", 2);
         def.put("consumer.forceToProcessAtLeast", 200);
@@ -89,7 +93,7 @@ public class Config {
         def.put("consumer.queueWarningSize", 1000);
         def.put("clearlog.dumpDeletedLog", false);
         def.put("clearlog.enableAutoClearLog", false);
-        final List<String> autoClearlog = new ArrayList<String>();
+        final List<String> autoClearlog = new ArrayList<>();
         for (final String world : worldNames) {
             autoClearlog.add("world \"" + world + "\" before 365 days all");
             autoClearlog.add("world \"" + world + "\" player lavaflow waterflow leavesdecay before 7 days all");
@@ -158,13 +162,14 @@ public class Config {
             }
         }
         logblock.saveConfig();
-        
+
         ComparableVersion configVersion = new ComparableVersion(config.getString("version"));
         boolean oldConfig = configVersion.compareTo(new ComparableVersion(logblock.getDescription().getVersion().replace(" (manually compiled)", ""))) < 0;
-        
+
         url = "jdbc:mysql://" + config.getString("mysql.host") + ":" + config.getInt("mysql.port") + "/" + getStringIncludingInts(config, "mysql.database");
         user = getStringIncludingInts(config, "mysql.user");
         password = getStringIncludingInts(config, "mysql.password");
+        mysqlUseSSL = config.getBoolean("mysql.useSSL", true);
         mysqlRequireSSL = config.getBoolean("mysql.requireSSL", false);
         delayBetweenRuns = config.getInt("consumer.delayBetweenRuns", 2);
         forceToProcessAtLeast = config.getInt("consumer.forceToProcessAtLeast", 0);
@@ -187,11 +192,11 @@ public class Config {
             throw new DataFormatException("logging.logKillsLevel doesn't appear to be a valid log level. Allowed are 'PLAYERS', 'MONSTERS' and 'ANIMALS'");
         }
         logEnvironmentalKills = config.getBoolean("logging.logEnvironmentalKills", false);
-        hiddenPlayers = new HashSet<String>();
+        hiddenPlayers = new HashSet<>();
         for (final String playerName : config.getStringList("logging.hiddenPlayers")) {
             hiddenPlayers.add(playerName.toLowerCase().trim());
         }
-        hiddenBlocks = new HashSet<Material>();
+        hiddenBlocks = new HashSet<>();
         for (final String blocktype : config.getStringList("logging.hiddenBlocks")) {
             final Material mat = Material.matchMaterial(blocktype);
             if (mat != null) {
@@ -200,11 +205,11 @@ public class Config {
                 throw new DataFormatException("Not a valid material in hiddenBlocks: '" + blocktype + "'");
             }
         }
-        ignoredChat = new ArrayList<String>();
+        ignoredChat = new ArrayList<>();
         for (String chatCommand : config.getStringList("logging.ignoredChat")) {
             ignoredChat.add(chatCommand.toLowerCase());
         }
-        dontRollback = new HashSet<Material>();
+        dontRollback = new HashSet<>();
         for (String e : config.getStringList("rollback.dontRollback")) {
             Material mat = Material.matchMaterial(e);
             if (mat != null) {
@@ -213,7 +218,7 @@ public class Config {
                 throw new DataFormatException("Not a valid material in dontRollback: '" + e + "'");
             }
         }
-        replaceAnyway = new HashSet<Material>();
+        replaceAnyway = new HashSet<>();
         for (String e : config.getStringList("rollback.replaceAnyway")) {
             Material mat = Material.matchMaterial(e);
             if (mat != null) {
@@ -237,7 +242,7 @@ public class Config {
         safetyIdCheck = config.getBoolean("safety.id.check", true);
         debug = config.getBoolean("debug", false);
         banPermission = config.getString("questioner.banPermission");
-        final List<Tool> tools = new ArrayList<Tool>();
+        final List<Tool> tools = new ArrayList<>();
         final ConfigurationSection toolsSec = config.getConfigurationSection("tools");
         for (final String toolName : toolsSec.getKeys(false)) {
             try {
@@ -246,7 +251,7 @@ public class Config {
                 final ToolBehavior leftClickBehavior = ToolBehavior.valueOf(tSec.getString("leftClickBehavior").toUpperCase());
                 final ToolBehavior rightClickBehavior = ToolBehavior.valueOf(tSec.getString("rightClickBehavior").toUpperCase());
                 final boolean defaultEnabled = tSec.getBoolean("defaultEnabled", false);
-                final Material item = Material.matchMaterial(tSec.getString("item","OAK_LOG"));
+                final Material item = Material.matchMaterial(tSec.getString("item", "OAK_LOG"));
                 final boolean canDrop = tSec.getBoolean("canDrop", false);
                 final boolean removeOnDisable = tSec.getBoolean("removeOnDisable", true);
                 final boolean dropToDisable = tSec.getBoolean("dropToDisable", false);
@@ -260,8 +265,8 @@ public class Config {
                 getLogger().log(Level.WARNING, "Error at parsing tool '" + toolName + "': ", ex);
             }
         }
-        toolsByName = new HashMap<String, Tool>();
-        toolsByType = new HashMap<Material, Tool>();
+        toolsByName = new HashMap<>();
+        toolsByType = new HashMap<>();
         for (final Tool tool : tools) {
             toolsByType.put(tool.item, tool);
             toolsByName.put(tool.name.toLowerCase(), tool);
@@ -270,7 +275,7 @@ public class Config {
             }
         }
         final List<String> loggedWorlds = config.getStringList("loggedWorlds");
-        worldConfigs = new HashMap<String, WorldConfig>();
+        worldConfigs = new HashMap<>();
         if (loggedWorlds.isEmpty()) {
             throw new DataFormatException("No worlds configured");
         }

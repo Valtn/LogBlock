@@ -39,17 +39,17 @@ public class BlockBurnLogging extends LoggingListener {
         Actor actor = new Actor("Fire", Config.logFireSpreadAsPlayerWhoCreatedIt ? event.getIgnitingBlock() : null);
         if (event.getCause() == IgniteCause.FLINT_AND_STEEL) {
             if (event.getIgnitingEntity() != null) {
-                return; // handled in block place                
+                return; // handled in block place
             } else {
                 actor = new Actor("Dispenser");
             }
-        } else if(event.getCause() == IgniteCause.LIGHTNING) {
+        } else if (event.getCause() == IgniteCause.LIGHTNING) {
             actor = new Actor("Lightning");
-        } else if(event.getCause() == IgniteCause.EXPLOSION) {
+        } else if (event.getCause() == IgniteCause.EXPLOSION) {
             actor = new Actor("Explosion");
-        } else if(event.getCause() == IgniteCause.LAVA) {
+        } else if (event.getCause() == IgniteCause.LAVA) {
             actor = new Actor("Lava");
-        } else if(event.getCause() == IgniteCause.ENDER_CRYSTAL) {
+        } else if (event.getCause() == IgniteCause.ENDER_CRYSTAL) {
             actor = new Actor("EnderCrystal");
         }
         if (isLogging(event.getBlock().getWorld(), Logging.FIRE)) {

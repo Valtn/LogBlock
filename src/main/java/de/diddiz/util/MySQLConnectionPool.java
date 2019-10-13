@@ -11,7 +11,7 @@ public class MySQLConnectionPool implements Closeable {
 
     private final HikariDataSource ds;
 
-    public MySQLConnectionPool(String url, String user, String password, boolean requireSSL) {
+    public MySQLConnectionPool(String url, String user, String password, boolean useSSL, boolean requireSSL) {
         this.ds = new HikariDataSource();
         ds.setJdbcUrl(url);
         ds.setUsername(user);
@@ -29,8 +29,8 @@ public class MySQLConnectionPool implements Closeable {
         ds.addDataSourceProperty("prepStmtCacheSize", "250");
         ds.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
         ds.addDataSourceProperty("useServerPrepStmts", "true");
-        
-        ds.addDataSourceProperty("useSSL", "true");
+
+        ds.addDataSourceProperty("useSSL", Boolean.toString(useSSL));
         ds.addDataSourceProperty("requireSSL", Boolean.toString(requireSSL));
         ds.addDataSourceProperty("verifyServerCertificate", "false");
     }

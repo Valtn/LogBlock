@@ -91,7 +91,6 @@ public class WorldEditor implements Runnable {
         return blacklistCollisions;
     }
 
-
     public void setSender(CommandSender sender) {
         this.sender = sender;
     }
@@ -148,7 +147,7 @@ public class WorldEditor implements Runnable {
 
     @Override
     public synchronized void run() {
-        final List<WorldEditorException> errorList = new ArrayList<WorldEditorException>();
+        final List<WorldEditorException> errorList = new ArrayList<>();
         int counter = 0;
         float size = edits.size();
         while (!edits.isEmpty() && counter < 100) {
@@ -202,12 +201,14 @@ public class WorldEditor implements Runnable {
     }
 
     public static enum PerformResult {
-        SUCCESS, BLACKLISTED, NO_ACTION
+        SUCCESS,
+        BLACKLISTED,
+        NO_ACTION
     }
 
     public interface Edit {
         PerformResult perform() throws WorldEditorException;
-        
+
         public long getTime();
     }
 
@@ -336,6 +337,7 @@ public class WorldEditor implements Runnable {
             return date;
         }
 
+        @Override
         public PerformResult perform() throws WorldEditorException {
             BlockData replacedBlock = getBlockReplaced();
             BlockData setBlock = getBlockSet();
@@ -348,9 +350,6 @@ public class WorldEditor implements Runnable {
                 return PerformResult.BLACKLISTED;
             }
             final Block block = loc.getBlock();
-            if (!world.isChunkLoaded(block.getChunk())) {
-                world.loadChunk(block.getChunk());
-            }
             if (BukkitUtils.isEmpty(replacedBlock.getMaterial()) && BukkitUtils.isEmpty(block.getType())) {
                 return PerformResult.NO_ACTION;
             }
@@ -443,6 +442,7 @@ public class WorldEditor implements Runnable {
 
     public static class EditComparator implements Comparator<Edit> {
         private final int mult;
+
         public EditComparator(QueryParams.Order order) {
             mult = order == Order.DESC ? 1 : -1;
         }

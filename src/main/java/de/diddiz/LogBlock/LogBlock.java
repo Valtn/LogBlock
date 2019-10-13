@@ -72,7 +72,7 @@ public class LogBlock extends JavaPlugin {
         }
         try {
             getLogger().info("Connecting to " + user + "@" + url + "...");
-            pool = new MySQLConnectionPool(url, user, password, mysqlRequireSSL);
+            pool = new MySQLConnectionPool(url, user, password, mysqlUseSSL, mysqlRequireSSL);
             final Connection conn = getConnection(true);
             if (conn == null) {
                 noDb = true;
@@ -287,7 +287,7 @@ public class LogBlock extends JavaPlugin {
         try {
             state = conn.createStatement();
             final ResultSet rs = state.executeQuery(params.getQuery());
-            final List<BlockChange> blockchanges = new ArrayList<BlockChange>();
+            final List<BlockChange> blockchanges = new ArrayList<>();
             while (rs.next()) {
                 blockchanges.add(new BlockChange(rs, params));
             }
@@ -325,12 +325,12 @@ public class LogBlock extends JavaPlugin {
             conn.close();
         }
     }
-    
+
     @Override
     public File getFile() {
         return super.getFile();
     }
-    
+
     public Questioner getQuestioner() {
         return questioner;
     }
